@@ -1,0 +1,14 @@
+body {
+  background-image: url("./bg-img.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.home-app {
+  height: 100vh;
+}
+.home-app .btn {
+  min-width: 200px;
+}
