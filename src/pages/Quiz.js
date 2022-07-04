@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import QuizItem from "../component/QuizItem";
 import useAxios from "../hooks/useAxios";
 
 const Quiz = () => {
   const apiUrl =
     "https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple";
   const { response, error, loading } = useAxios({ url: apiUrl });
-  console.log(response);
+
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [options, setOptions] = useState([]);
+  const [questionItem, setQuestionItem] = useState([]);
+
+  useEffect(() => {
+    if (response?.results) {
+      const SingleQuestion = response.results[questionIndex];
+      const allOptions = [...SingleQuestion.incorrect_answers];
+      const correctAnswer = SingleQuestion.correct_answer;
+      allOptions.push(correctAnswer);
+      allOptions.sort(() => Math.random() - 1);
+      setOptions(allOptions);
+      setQuestionItem(SingleQuestion);
+    }
+  }, [questionIndex, response]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="quiz-container">
       <div className="quiz-top-area text-center">
@@ -29,30 +51,15 @@ const Quiz = () => {
       <div className="quiz-main-area">
         <div className="quiz-title text-center">
           <span>Question 1</span>
-          <h2>Start Quiz</h2>
-          <p>
-            User interface design.One Awesome Flat Ui Kit in Psd format. The
-            pack ... Quiz App is a mobile UI kit created using Sketch and
-            Photoshop, aimed to help you kick start your next mobile quiz or
-            trivia project
-          </p>
+          <p>{questionItem.question}</p>
         </div>
         <div className="quiz-option-selector clearfix">
           <ul>
-            <li>
-              <label className="start-quiz-item">
-                <input
-                  type="radio"
-                  name="quiz"
-                  value="Email Markering"
-                  className="exp-option-box"
-                />
-                <span className="exp-number text-uppercase">A</span>
-                <span className="exp-label">Email Markering</span>
-                <span className="checkmark-border"></span>
-              </label>
-            </li>
-            <li>
+            {options.map((option, index) => (
+              <QuizItem option={option} index={index} key={index} />
+            ))}
+
+            {/* <li>
               <label>
                 <input
                   type="radio"
@@ -90,7 +97,7 @@ const Quiz = () => {
                 <span className="exp-label">SEO </span>
                 <span className="checkmark-border"></span>
               </label>
-            </li>
+            </li> */}
           </ul>
         </div>
         <div className="quiz-next-prev-btn">
